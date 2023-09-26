@@ -2,6 +2,23 @@ display = document.querySelector('.display-screen')
 console.log(display)
 let expression = [""];
 
+function indexOfMultiple(string, ...keywords) {
+    let lowestIndex = string.length + 1;
+    console.log(lowestIndex);
+    console.log(keywords)
+    keywords.forEach((keyword) => {
+        index = string.indexOf(`${keyword}`)
+        console.log(index);
+        if (index < lowestIndex && index > -1) {
+            lowestIndex = index;
+        }
+    });
+    if (lowestIndex == string.length + 1) return -1;
+    return lowestIndex;
+}
+
+console.log(indexOfMultiple("/a÷aaaab","/","b"))
+
 function updateDisplay(data) {
     if (expression[0] == "") { 
         display.textContent = "Enter a number";
@@ -13,43 +30,52 @@ function updateDisplay(data) {
 
 //button functions
 function addNumber(e) {
+    let content = e.target.textContent;
     let last = expression[expression.length-1];
-    if (expression.length > 1 && /(?:^|[^+\-÷x\s])[-+÷x]/.test(expression[expression.length-1])
-     && !/(-(?![+\-×÷]))|[+\-×÷]/g) {
+
+    if (e instanceof KeyboardEvent) content = e.key;
+
+    if (expression.length > 1 && /(?:^|[^+\-÷*x\s])[-+÷*x]/.test(expression[expression.length-1])
+     && !/(-(?![+\-*×÷]))|[+\-*×÷]/g) {
         console.log('Operator detected, creating new item');
-        expression.push(e.target.textContent);
+        expression.push(content);
         updateDisplay();
         return;
     }
     if (last == " " || last == "" || last == "NaN" || last == "Infinity") {
-        expression[expression.length-1] = e.target.textContent;
+        expression[expression.length-1] = content;
         updateDisplay();
         return;
     }
-    expression[expression.length-1] += e.target.textContent;
+    expression[expression.length-1] += content;
     updateDisplay();
 }
 
 function addOperator(e) {
+    let content = e.target.textContent;
+
+    if (e instanceof KeyboardEvent) content = e.key;
+
     if (!/[0-9]/g.test(expression[expression.length-1])) {
         console.log('cant add operator, no number before');
         return;
     }
-    expression.push(e.target.textContent);
+    expression.push(content);
     expression.push("");
     updateDisplay();
 }
 
 function backspace() {
     let last = expression[expression.length-1];
-
-    if (expression.length > 1) {
-        expression = expression.slice(0,-1);
+    console.log(last)
+    console.log(expression.length)
+    if (last.length <= 0 && expression.length > 1) {
+        expression = expression.slice(0,-2);
     } else if (last.length > 0) {
         console.log(last)
         console.log('erasing')
         expression[expression.length-1] = last.slice(0,-1);
-    }
+    } 
     updateDisplay();
     return;
 }
@@ -74,8 +100,8 @@ function negate() {
 //recursive evaluator
 function evaluate(calculation) {
     function updateIndices() {
-        multiplyIndex = calculation.indexOf('x');
-        divideIndex = calculation.indexOf('÷');
+        multiplyIndex = indexOfMultiple(calculation,'x','*');
+        divideIndex = indexOfMultiple(calculation,'/','÷');
         plusIndex = calculation.indexOf('+');
         minusIndex = calculation.indexOf('-');
     }
@@ -110,11 +136,6 @@ function evaluate(calculation) {
 
     let calculatedValue = 0;
     console.log('recursing')
-
-    let multiplyIndex = calculation.indexOf('x');
-    let divideIndex = calculation.indexOf('÷');
-    let plusIndex = calculation.indexOf('+');
-    let minusIndex = calculation.indexOf('-');
 
     updateIndices();
 
@@ -172,4 +193,22 @@ document.querySelector('.equals').addEventListener('click', () => {
     console.log("Evaluating " + display.textContent);
     console.log(expression);
     evaluate(expression);
+});
+
+    //KEYBOARD EVENTS
+window.addEventListener('keydown', (e) => {
+    if (/[0-9.\.]/.test(e.key)) {
+        addNumber(e);
+    }
+    if (/[+\-/÷*]/.test(e.key)) {
+        addOperator(e);
+    }
+    if (e.key == "Enter") {
+        console.log("Evaluating " + display.textContent);
+        console.log(expression);
+        evaluate(expression);
+    }
+    if (e.key == "Backspace") {
+        backspace();
+    }
 });
