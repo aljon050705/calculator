@@ -1,6 +1,6 @@
-display = document.querySelector('.display-screen-expression')
-result = document.querySelector('.display-screen-result')
-console.log(display)
+display = document.querySelector('.display-screen-expression');
+result = document.querySelector('.display-screen-result');
+console.log(display);
 let expression = [""];
 
 function indexOfMultiple(string, ...keywords) {
@@ -16,12 +16,13 @@ function indexOfMultiple(string, ...keywords) {
 }
 
 function updateDisplay() {
+    console.log(expression);
     if (expression[0] == "") { 
         display.textContent = "Enter a number";
         return;
     }
     display.textContent = expression.join(' ');
-    console.log(expression);
+    
 }
 
 function updateResult(calculation) {
@@ -35,8 +36,9 @@ function addNumber(e) {
 
     if (e instanceof KeyboardEvent) content = e.key;
 
-    if (expression.length > 1 && /(?:^|[^+\-÷*x\s])[-+÷*x]/.test(expression[expression.length-1])
-     && !/(-(?![+\-*×÷]))|[+\-*×÷]/g) {
+    if (last == "=") expression = [`${result.textContent}`];
+
+    if (expression.length > 1 && /[+\-÷*/x](?![0-9])/g.test(expression[expression.length-1])) {
         console.log('Operator detected, creating new item');
         expression.push(content);
         updateDisplay();
@@ -56,6 +58,8 @@ function addOperator(e) {
 
     if (e instanceof KeyboardEvent) content = e.key;
 
+    if (expression[expression.length-1] == "=") expression = [`${result.textContent}`];
+
     if (!/[0-9]/g.test(expression[expression.length-1])) {
         console.log('cant add operator, no number before');
         return;
@@ -67,10 +71,9 @@ function addOperator(e) {
 
 function backspace() {
     let last = expression[expression.length-1];
-    console.log(last)
-    console.log(expression.length)
-    if (last.length <= 0 && expression.length > 1) {
-        expression = expression.slice(0,-2);
+    console.log(expression)
+    if (expression.length > 1 && last.length <= 1) {
+        expression = expression.slice(0,-1);
     } else if (last.length > 0) {
         console.log(last)
         console.log('erasing')
@@ -98,7 +101,8 @@ function negate() {
 }
 
 //recursive evaluator
-function evaluate(calculation) {
+function evaluate(givenExpression) {
+    let calculation = Array.from(givenExpression);
     function updateIndices() {
         multiplyIndex = indexOfMultiple(calculation,'x','*');
         divideIndex = indexOfMultiple(calculation,'/','÷');
@@ -116,7 +120,6 @@ function evaluate(calculation) {
                 break;
             case 'plus':
                 calculatedValue = (+calculation[index-1]) + (+calculation[index+1]);
-
                 break;
             case 'minus':
                 calculatedValue = (+calculation[index-1]) - (+calculation[index+1]);
@@ -129,8 +132,9 @@ function evaluate(calculation) {
     
     if (calculation.length <= 1) {
         console.log('Reached base case')
-        expression = calculation;
-        //updateDisplay();
+        expression.push("=");
+        console.log(expression)
+        updateDisplay();
         updateResult(calculation);
         return;
     }
