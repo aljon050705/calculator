@@ -1,14 +1,12 @@
-display = document.querySelector('.display-screen')
+display = document.querySelector('.display-screen-expression')
+result = document.querySelector('.display-screen-result')
 console.log(display)
 let expression = [""];
 
 function indexOfMultiple(string, ...keywords) {
     let lowestIndex = string.length + 1;
-    console.log(lowestIndex);
-    console.log(keywords)
     keywords.forEach((keyword) => {
         index = string.indexOf(`${keyword}`)
-        console.log(index);
         if (index < lowestIndex && index > -1) {
             lowestIndex = index;
         }
@@ -17,15 +15,17 @@ function indexOfMultiple(string, ...keywords) {
     return lowestIndex;
 }
 
-console.log(indexOfMultiple("/a÷aaaab","/","b"))
-
-function updateDisplay(data) {
+function updateDisplay() {
     if (expression[0] == "") { 
         display.textContent = "Enter a number";
         return;
     }
     display.textContent = expression.join(' ');
     console.log(expression);
+}
+
+function updateResult(calculation) {
+    result.textContent = calculation.join(' ');;
 }
 
 //button functions
@@ -130,7 +130,8 @@ function evaluate(calculation) {
     if (calculation.length <= 1) {
         console.log('Reached base case')
         expression = calculation;
-        updateDisplay();
+        //updateDisplay();
+        updateResult(calculation);
         return;
     }
 
@@ -197,7 +198,8 @@ document.querySelector('.equals').addEventListener('click', () => {
 
     //KEYBOARD EVENTS
 window.addEventListener('keydown', (e) => {
-    if (/[0-9.\.]/.test(e.key)) {
+    if (/\b\d+\b(?!F)/.test(e.key)) {
+        console.log(e.key)
         addNumber(e);
     }
     if (/[+\-/÷*]/.test(e.key)) {
