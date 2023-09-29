@@ -1,8 +1,26 @@
-display = document.querySelector('.display-screen-expression');
-result = document.querySelector('.display-screen-result');
-console.log(display);
+//const displayScreenWidth = document.querySelector('.display-screen').offsetWidth;
+const displayScreen = document.querySelector('.display-screen');
+const display = document.querySelector('.display-screen-expression');
+const displayStartingFontSize = getComputedStyle(display).fontSize;
+const result = document.querySelector('.display-screen-result');
+const resultStartingFontSize = getComputedStyle(result).fontSize;
+const realtimeCalculation = document.querySelector('.realtime-checkbox');
+realtimeCalculation.checked = true;
+
 let expression = [""];
 
+function fontDynamicResizer(dom, containerDom, maxFontSize) {
+    if (dom.offsetWidth >= containerDom.offsetWidth || dom.offsetHeight >= containerDom.offsetHeight*0.6) {
+        while (dom.offsetWidth >= containerDom.offsetWidth || dom.offsetHeight >= containerDom.offsetHeight/2) {
+                dom.style.fontSize = parseInt(getComputedStyle(dom).fontSize)-1+"px";
+        }
+    } else if (parseInt(getComputedStyle(dom).fontSize) <  parseInt(maxFontSize)) {
+        while ((parseInt(getComputedStyle(dom).fontSize) < parseInt(maxFontSize)) && 
+        (dom.offsetWidth < containerDom.offsetWidth*0.9)) {
+            dom.style.fontSize = parseInt(getComputedStyle(dom).fontSize)+1+"px";
+        }
+    }
+}
 function indexOfMultiple(string, ...keywords) {
     let lowestIndex = string.length + 1;
     keywords.forEach((keyword) => {
@@ -22,11 +40,14 @@ function updateDisplay() {
         return;
     }
     display.textContent = expression.join(' ');
-    
+
+    fontDynamicResizer(display,displayScreen, displayStartingFontSize);
+    fontDynamicResizer(result,displayScreen, resultStartingFontSize);
 }
 
 function updateResult(calculation) {
-    result.textContent = calculation.join(' ');;
+    result.textContent = calculation.join(' ');
+    fontDynamicResizer(result,displayScreen, resultStartingFontSize);
 }
 
 //button functions
@@ -42,14 +63,13 @@ function addNumber(e) {
         console.log('Operator detected, creating new item');
         expression.push(content);
         updateDisplay();
-        return;
-    }
-    if (last == " " || last == "" || last == "NaN" || last == "Infinity") {
+    } else if (last == " " || last == "" || last == "NaN" || last == "Infinity") {
         expression[expression.length-1] = content;
         updateDisplay();
-        return;
+    } else {
+        expression[expression.length-1] += content;
     }
-    expression[expression.length-1] += content;
+    if (realtimeCalculation.checked) evaluate(expression);
     updateDisplay();
 }
 
@@ -72,13 +92,16 @@ function addOperator(e) {
 function backspace() {
     let last = expression[expression.length-1];
     console.log(expression)
-    if (expression.length > 1 && last.length <= 1) {
+    if (last == "=") {
         expression = expression.slice(0,-1);
+    } else if (expression.length > 1 && last.length <= 0) {
+        expression = expression.slice(0,-2);
     } else if (last.length > 0) {
         console.log(last)
         console.log('erasing')
         expression[expression.length-1] = last.slice(0,-1);
     } 
+    if (realtimeCalculation.checked) evaluate(expression);
     updateDisplay();
     return;
 }
@@ -91,12 +114,16 @@ function clear() {
 function negate() {
     let last = expression[expression.length-1];
 
-    console.log(last)
-    if (last < 0) {
+    
+    if (last.length == 0) {
+        return;
+    } else if (last < 0) {
         expression[expression.length-1] = last.replace("-","");
     } else if (last >= 0) {
         expression[expression.length-1] = "-" + last;
     }
+    console.log(last)
+    if (realtimeCalculation.checked) evaluate(expression);
     updateDisplay();
 }
 
@@ -132,8 +159,10 @@ function evaluate(givenExpression) {
     
     if (calculation.length <= 1) {
         console.log('Reached base case')
-        expression.push("=");
-        console.log(expression)
+        //console.log(expression)
+        //expression = calculation;
+        //if (expression[expression.length-1] != "=") expression.push("=");
+        if (!(realtimeCalculation.checked)) expression.push("=");
         updateDisplay();
         updateResult(calculation);
         return;
@@ -201,20 +230,33 @@ document.querySelector('.equals').addEventListener('click', () => {
 });
 
     //KEYBOARD EVENTS
+function addStylePressed(e) {
+    target = document.querySelector(`[data-key="${e.key}"]`);
+    if (target) target.classList.add('pressed');
+}
+
 window.addEventListener('keydown', (e) => {
     if (/\b\d+\b(?!F)/.test(e.key)) {
+        addStylePressed(e);
         console.log(e.key)
         addNumber(e);
-    }
-    if (/[+\-/÷*]/.test(e.key)) {
+    } if (/[+\-/÷*]/.test(e.key)) {
+        addStylePressed(e);
         addOperator(e);
-    }
-    if (e.key == "Enter") {
+    } if (e.key == "Enter" || e.key == "=") {
+        e = {...e, key: "="};
+        addStylePressed(e);
         console.log("Evaluating " + display.textContent);
-        console.log(expression);
         evaluate(expression);
-    }
-    if (e.key == "Backspace") {
+        updateDisplay();
+    } if (e.key == "Backspace") {
+        addStylePressed(e);
         backspace();
     }
+});
+
+window.addEventListener('keyup', (e) => {
+    key = document.querySelector(`[data-key="${e.key}"]`);
+    if (e.key == "Enter") key = document.querySelector(`[data-key="="]`);
+    if (key) key.classList.remove('pressed');
 });

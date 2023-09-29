@@ -1,7 +1,9 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+
 * {
     margin: 0;
     box-sizing: border-box;
-    font-family: Helvetica, Arial;
+    font-family: "Open Sans", Helvetica, Arial;
 }
 
 footer, header {
@@ -26,10 +28,10 @@ footer {
 }
 
 .github-icon {
-    width: 1.5vw;
+    width: 2vh;
     background-color: white;
     border-radius: 50%;
-    border: 0.1vw solid white;
+    border: 0.1vh solid white;
 }
 
 .calculator {
@@ -37,43 +39,45 @@ footer {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    background-color: rgb(61, 61, 61);
+    background-color: rgb(51, 51, 51);
     text-align: center;
     width: 450px;
     position: relative;
     left: 50%;
     transform: translateX(-50%);
-    padding: 50px;
+    padding: 30px 50px 50px 50px;
     margin: 50px 0 0;
     border-radius: 10px;
-    border: 3px solid rgb(100,100,100);
+    border: 0;
+    box-shadow: 0 10px 0 rgb(40,40,40);
 }
 
 .display-screen {
     display:flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: flex-end;
+    justify-content: space-between;
     width: 100%;
-    text-align: right;
+    text-align: left;
     background-color: rgb(109, 116, 106);
     margin-bottom: 20px;
     height: 100px;
     border-radius: 5px;
     font-size: 40px;
     padding: 5px;
-    /*word-break: break-all;*/
+    word-break:keep-all;
+    /*white-space: nowrap;*/
 }
 
 .display-screen-expression {
-    flex: 1 1 auto;
+    flex: 1 1 0;
     align-self: flex-start;
 }
 
 .display-screen-result {
-    flex: 1 1 auto;
+    flex: 1 1 0;
+    align-self: flex-end;
     justify-self: flex-end;
-    color: rgb(60,60,60);
+    color: rgb(60,60,70);
     font-size: 30px;
 }
 
@@ -85,18 +89,25 @@ footer {
 }
 
 .calculator-buttons button {
-    font-size: 20px;
+    font-size: 25px;
     text-align: center;
     padding: 20px 0;
-    background-color: rgb(155, 155, 155);
+    background-color: rgb(115, 115, 115);
+    color: rgb(220,220,220);
+    border: 0;
     border-radius: 5px;
-    /*box-shadow: 10px 10px 20px;*/
+    box-shadow: 0 5px 0 rgb(80,80,80);
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
 }
 
 .calculator-buttons button:hover {
-    background-color: rgb(195, 195, 195);
+    background-color: rgb(165, 165, 165);
+}
+
+.calculator-buttons button:active {
+    box-shadow: 0 0 0;
+    transform: translateY(5px);
 }
 
 .span-2 {
@@ -105,4 +116,79 @@ footer {
 
 button.orange {
     background-color: rgb(177, 115, 0);
+    box-shadow: 0 5px 0 rgb(137, 95, 0);
+}
+
+.pressed {
+    box-shadow: 0 0 0 rgb(80,80,80) !important;
+    transform: translateY(5px);
+}
+
+/* Slider */
+.realtime-switch {
+    width:100%;
+    display:flex;
+    justify-content: flex-end;
+    gap: 10px;
+    align-items: center;
+    margin: 0 0 10px;
+}
+
+.switch-label {
+    color: rgb(220,220,220);
+    /*background-color: rgb(155,155,155);
+    box-shadow: 0 2px 0 rgb(100,100,100);
+    padding: 3px 10px;
+    border-radius: 5px;*/
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 25px;
+  /*margin-right: 10px;*/
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgb(115, 115, 115);
+  box-shadow: 0 -2px 0 rgb(80,80,80);
+  border-radius: 15px;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 87%;
+  width: 45%;
+  left: 5%;
+  bottom: 10%;
+  border-radius: 15px;
+  box-shadow: 0 2px 0 rgb(115,115,115);
+  background-color: rgb(200,200,200);
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: rgb(109, 116, 106);
+}
+
+
+input:checked + .slider:before {
+  transform: translateX(100%);
 }

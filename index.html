@@ -8,30 +8,37 @@
 </head>
 <body>
     <div class="calculator">
+        <div class="realtime-switch">
+            <div class="switch-label">Auto-Calculate</div>
+            <label class="switch">
+                <input class="realtime-checkbox" type="checkbox">
+                <span class="slider"></span>
+            </label>
+        </div>
         <div class="display-screen">
             <div class="display-screen-expression">Enter a number</div>
-            <div class="display-screen-result">----</div>
+            <div class="display-screen-result">-</div>
         </div>
         <div class="calculator-buttons">
-            <button class="clear">AC</button>
-            <button class="delete">DEL</button>
-            <button class="negate">+/-</button>
-            <button class="calculator-button-operator divide">&#247;</button>
-            <button class="calculator-button-7">7</button>
-            <button class="calculator-button-8">8</button>
-            <button class="calculator-button-9">9</button>
-            <button class="calculator-button-operator multiply">*</button>
-            <button class="calculator-button-4">4</button>
-            <button class="calculator-button-5">5</button>
-            <button class="calculator-button-6">6</button>
-            <button class="calculator-button-operator minus">-</button>
-            <button class="calculator-button-1">1</button>
-            <button class="calculator-button-2">2</button>
-            <button class="calculator-button-3">3</button>
-            <button class="calculator-button-operator plus">+</button>
-            <button class="calculator-button-0 span-2">0</button>
-            <button class="calculator-button-operator decimal">.</button>
-            <button class="calculator-button-operator equals orange">=</button>
+            <button class="clear" data-key="AC">AC</button>
+            <button class="delete" data-key="Backspace">DEL</button>
+            <button class="negate" data-key="negate">+/-</button>
+            <button class="calculator-button-operator divide" data-key="/">&#247;</button>
+            <button class="calculator-button-7" data-key="7">7</button>
+            <button class="calculator-button-8" data-key="8">8</button>
+            <button class="calculator-button-9" data-key="9">9</button>
+            <button class="calculator-button-operator multiply" data-key="*">*</button>
+            <button class="calculator-button-4" data-key="4">4</button>
+            <button class="calculator-button-5" data-key="5">5</button>
+            <button class="calculator-button-6" data-key="6">6</button>
+            <button class="calculator-button-operator minus" data-key="-">-</button>
+            <button class="calculator-button-1" data-key="1">1</button>
+            <button class="calculator-button-2" data-key="2">2</button>
+            <button class="calculator-button-3" data-key="3">3</button>
+            <button class="calculator-button-operator plus" data-key="+">+</button>
+            <button class="calculator-button-0 span-2" data-key="0">0</button>
+            <button class="calculator-button-operator decimal" data-key=".">.</button>
+            <button class="calculator-button-operator equals orange" data-key="=">=</button>
         </div>
     </div>
 
